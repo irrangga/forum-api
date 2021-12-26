@@ -15,8 +15,7 @@ describe('a RegisterThread entities', () => {
     // Arrange
     const payload = {
       title: 123,
-      body: true,
-      owner: ['abc']
+      body: true
     }
     // Action and Assert
     expect(() => new RegisterThread(payload)).toThrowError('REGISTER_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION')
@@ -26,8 +25,7 @@ describe('a RegisterThread entities', () => {
     // Arrange
     const payload = {
       title: 'sebuah thread',
-      body: 'sebuah body thread',
-      owner: 'user-123'
+      body: 'sebuah body thread'
     }
     // Action
     const { title, body } = new RegisterThread(payload)

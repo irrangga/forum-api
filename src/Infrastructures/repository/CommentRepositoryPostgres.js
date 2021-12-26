@@ -17,15 +17,6 @@ class CommentRepositoryPostgres extends CommentRepository {
     const date = new Date().toISOString()
     const isDelete = false
 
-    const threadQuery = {
-      text: 'SELECT * FROM threads WHERE id = $1',
-      values: [threadId]
-    }
-    const threadResult = await this._pool.query(threadQuery)
-    if (!threadResult.rowCount) {
-      throw new NotFoundError('thread tidak ditemukan')
-    }
-
     const query = {
       text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6) RETURNING id, thread_id, content, owner',
       values: [id, threadId, content, date, owner, isDelete]
@@ -41,11 +32,12 @@ class CommentRepositoryPostgres extends CommentRepository {
       text: 'SELECT * FROM comments WHERE id = $1',
       values: [commentId]
     }
-    const result = await this._pool.query(query)
 
+    const result = await this._pool.query(query)
     if (!result.rowCount) {
       throw new NotFoundError('comment tidak ditemukan')
     }
+
     const comments = result.rows[0]
     if (comments.owner !== owner) {
       throw new AuthorizationError('tidak punya izin untuk mengakses resource ini')
@@ -80,7 +72,11 @@ class CommentRepositoryPostgres extends CommentRepository {
       values: [commentId]
     }
 
-    await this._pool.query(query)
+    const result = await this._pool.query(query)
+
+    if (!result.rowCount) {
+      throw new NotFoundError('comment tidak ditemukan')
+    }
   }
 }
 

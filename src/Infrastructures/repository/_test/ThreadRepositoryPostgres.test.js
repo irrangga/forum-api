@@ -58,28 +58,53 @@ describe('ThreadRepositoryPostgres', () => {
   })
 
   describe('getThreadByThreadId', () => {
+    it('should throw error when thread is not exists', async () => {
+      // Arrange
+      const fakeIdGenerator = () => '123' // stub
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: 'user-123' })
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' })
+
+      // Action & Assert
+      await expect(threadRepositoryPostgres.getThreadByThreadId('thread-321'))
+        .rejects.toThrow(NotFoundError)
+    })
+
     it('should return commented thread correctly', async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({ id: 'user-123' })
+      await UsersTableTestHelper.addUser({
+        id: 'user-123',
+        username: 'dicoding'
+      })
       await ThreadsTableTestHelper.addThread({
         id: 'thread-123',
         title: 'sebuah thread',
-        body: 'sebuah body thread',
-        owner: 'user-123'
+        body: 'sebuah body thread'
       })
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool)
 
-      // Action
-      const commentedThread = await threadRepositoryPostgres.getThreadByThreadId('thread-123')
+      // Action & Assert
+      const thread = await threadRepositoryPostgres.getThreadByThreadId('thread-123')
+      expect(thread.id).toEqual('thread-123')
+      expect(thread.title).toEqual('sebuah thread')
+      expect(thread.body).toEqual('sebuah body thread')
+      expect(thread.username).toEqual('dicoding')
+    })
+  })
 
-      // Assert
-      await expect(threadRepositoryPostgres.getThreadByThreadId('thread-123'))
-        .resolves.not.toThrow(NotFoundError)
-      expect(commentedThread).toHaveProperty('id')
-      expect(commentedThread).toHaveProperty('title')
-      expect(commentedThread).toHaveProperty('body')
-      expect(commentedThread).toHaveProperty('username')
-      expect(commentedThread).toHaveProperty('date')
+  describe('verifyAvailableThread function', () => {
+    it('should throw error when thread is not exists', async () => {
+      // Arrange
+      const fakeIdGenerator = () => '123' // stub
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: 'user-123' })
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' })
+
+      // Action & Assert
+      await expect(threadRepositoryPostgres.verifyAvailableThread('thread-321'))
+        .rejects.toThrow(NotFoundError)
     })
   })
 })

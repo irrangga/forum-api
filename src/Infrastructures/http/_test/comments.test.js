@@ -6,7 +6,7 @@ const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelp
 const container = require('../../container')
 const createServer = require('../createServer')
 
-describe('/threads/{threadId}/comments endpoint', () => {
+describe('/comments endpoint', () => {
   afterAll(async () => {
     await pool.end()
   })
@@ -98,6 +98,39 @@ describe('/threads/{threadId}/comments endpoint', () => {
       expect(response.statusCode).toEqual(400)
       expect(responseJson.status).toEqual('fail')
       expect(responseJson.message).toEqual('tidak dapat membuat comment baru karena tipe data tidak sesuai')
+    })
+  })
+
+  describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
+    it('should response 200 and persisted comment', async () => {
+      // Arrange
+      const requestPayload = {
+        content: 'sebuah comment'
+      }
+
+      const accessToken = await ServerTestHelper.getAccessToken({ id: 'user-123', username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-123', title: 'sebuah thread', body: 'sebuah body thread'
+      })
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-123', content: 'sebuah comment'
+      })
+      const server = await createServer(container)
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-123/comments/comment-123',
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(200)
+      expect(responseJson.status).toEqual('success')
     })
   })
 })
