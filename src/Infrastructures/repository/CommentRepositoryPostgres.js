@@ -51,7 +51,8 @@ class CommentRepositoryPostgres extends CommentRepository {
         'id', comments.id,
         'username', users.username,
         'date', comments.date,
-        'content', comments.content
+        'content', comments.content,
+        'is_delete', comments.is_delete
         )) AS comments
       FROM comments
       JOIN users ON comments.owner = users.id
@@ -67,7 +68,7 @@ class CommentRepositoryPostgres extends CommentRepository {
   async deleteComment (commentId) {
     const query = {
       text: `UPDATE comments 
-      SET is_delete = true, content = '**komentar telah dihapus**'
+      SET is_delete = true
       WHERE id = $1`,
       values: [commentId]
     }
