@@ -53,6 +53,7 @@ const createServer = async (container) => {
     }
   ])
 
+  // say Hello World!
   server.route({
     method: 'GET',
     path: '/',
