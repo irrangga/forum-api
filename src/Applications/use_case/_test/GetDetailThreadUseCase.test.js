@@ -11,7 +11,6 @@ describe('GetDetailThreadUseCase', () => {
     const thread = {
       id: 'thread-h_2FkLZhtgBKY2kh4CC02',
       title: 'sebuah thread',
-      body: 'sebuah body thread',
       date: '2021-08-08T07:19:09.775Z',
       username: 'dicoding'
 
@@ -23,8 +22,7 @@ describe('GetDetailThreadUseCase', () => {
           id: 'comment-_pby2_tmXV6bcvcdev8xk',
           username: 'johndoe',
           date: '2021-08-08T07:22:33.555Z',
-          content: 'sebuah comment',
-          is_delete: false
+          content: 'sebuah comment'
         }
       ]
     }
@@ -32,7 +30,6 @@ describe('GetDetailThreadUseCase', () => {
     const expectedCommentedThread = {
       id: 'thread-h_2FkLZhtgBKY2kh4CC02',
       title: 'sebuah thread',
-      body: 'sebuah body thread',
       date: '2021-08-08T07:19:09.775Z',
       username: 'dicoding',
       comments: [
@@ -40,8 +37,7 @@ describe('GetDetailThreadUseCase', () => {
           id: 'comment-_pby2_tmXV6bcvcdev8xk',
           username: 'johndoe',
           date: '2021-08-08T07:22:33.555Z',
-          content: 'sebuah comment',
-          is_delete: false
+          content: 'sebuah comment'
         }
       ]
     }
@@ -80,7 +76,6 @@ describe('GetDetailThreadUseCase', () => {
     const thread = {
       id: 'thread-h_2FkLZhtgBKY2kh4CC02',
       title: 'sebuah thread',
-      body: 'sebuah body thread',
       date: '2021-08-08T07:19:09.775Z',
       username: 'dicoding'
     }
@@ -91,8 +86,7 @@ describe('GetDetailThreadUseCase', () => {
           id: 'comment-_pby2_tmXV6bcvcdev8xk',
           username: 'johndoe',
           date: '2021-08-08T07:22:33.555Z',
-          content: 'sebuah comment',
-          is_delete: true
+          content: '**komentar telah dihapus**'
         }
       ]
     }
@@ -100,7 +94,6 @@ describe('GetDetailThreadUseCase', () => {
     const expectedCommentedThread = {
       id: 'thread-h_2FkLZhtgBKY2kh4CC02',
       title: 'sebuah thread',
-      body: 'sebuah body thread',
       date: '2021-08-08T07:19:09.775Z',
       username: 'dicoding',
       comments: [
@@ -108,8 +101,7 @@ describe('GetDetailThreadUseCase', () => {
           id: 'comment-_pby2_tmXV6bcvcdev8xk',
           username: 'johndoe',
           date: '2021-08-08T07:22:33.555Z',
-          content: '**komentar telah dihapus**',
-          is_delete: true
+          content: '**komentar telah dihapus**'
         }
       ]
     }

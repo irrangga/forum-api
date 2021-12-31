@@ -7,6 +7,7 @@ const pool = require('../../database/postgres/pool')
 const CommentRepositoryPostgres = require('../CommentRepositoryPostgres')
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError')
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError')
+const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres')
 
 describe('CommentRepositoryPostgres', () => {
   afterEach(async () => {
@@ -111,6 +112,48 @@ describe('CommentRepositoryPostgres', () => {
     })
   })
 
+  describe('getCommentByThreadId function', () => {
+    it('should throw error when thread is not exists', async () => {
+      // Arrange
+      const fakeIdGenerator = () => '123' // stub
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: 'user-123' })
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' })
+
+      // Action & Assert
+      await expect(threadRepositoryPostgres.getThreadByThreadId('thread-321'))
+        .rejects.toThrow(NotFoundError)
+    })
+
+    it('should return comment correctly', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({
+        id: 'user-123',
+        username: 'dicoding'
+      })
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-123',
+        title: 'sebuah thread',
+        body: 'sebuah body thread'
+      })
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+        owner: 'user-123'
+      })
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool)
+
+      // Action & Assert
+      const comment = await commentRepositoryPostgres.getCommentByThreadId('thread-123')
+      const detailComment = comment.comments[0]
+      expect(detailComment.id).toEqual('comment-123')
+      expect(detailComment.content).toEqual('sebuah content')
+      expect(detailComment.date).toEqual('2021-08-08T07:19:09.775Z')
+      expect(detailComment.username).toEqual('dicoding')
+    })
+  })
+
   describe('deleteComment function', () => {
     it('should throw error when comment is not exists', async () => {
       // Arrange
@@ -151,6 +194,8 @@ describe('CommentRepositoryPostgres', () => {
       // Action & Assert
       await expect(commentRepositoryPostgres.deleteComment('comment-123'))
         .resolves.not.toThrowError(NotFoundError)
+      const delComment = await CommentsTableTestHelper.findCommentById('comment-123')
+      expect(delComment[0].is_delete).toBe(true)
     })
   })
 })

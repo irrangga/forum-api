@@ -45,5 +45,6 @@ describe('AddCommentUseCase', () => {
     useCasePayload.threadId,
     useCasePayload.owner
     )
+    expect(mockThreadRepository.verifyAvailableThread).toBeCalledWith(useCasePayload.threadId)
   })
 })
