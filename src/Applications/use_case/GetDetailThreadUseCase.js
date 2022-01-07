@@ -12,20 +12,14 @@ class GetDetailThreadUseCase {
     const thread = await this._threadRepository.getThreadByThreadId(threadId)
     const comments = await this._commentRepository.getCommentByThreadId(threadId)
 
-    const finalComments = comments.comments.map((comment) => {
-      const detailComments = new DetailComment({
-        ...comment,
-        isDelete: comment.is_delete
-      })
-
-      return {
-        ...detailComments
-      }
-    })
-
     return {
       ...thread,
-      comments: finalComments
+      comments: comments.comments.map((comment) => ({
+        ...new DetailComment({
+          ...comment,
+          isDelete: comment.is_delete
+        })
+      }))
     }
   }
 }

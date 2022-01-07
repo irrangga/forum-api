@@ -38,13 +38,9 @@ class CommentsHandler {
 
     const deleteCommentUseCase = this._container.getInstance(DeleteCommentUseCase.name)
     await deleteCommentUseCase.execute(useCasePayload)
-
-    const response = h.response({
+    return {
       status: 'success'
-    })
-
-    response.code(200)
-    return response
+    }
   }
 }
 
